@@ -42,7 +42,7 @@ A Laravel-based web application for staff to manage bookings, track payments, an
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/yourusername/booking-analytics.git
+git clone https://github.com/JowenGonzales/BookingSystem
 cd booking-system
 ```
 
