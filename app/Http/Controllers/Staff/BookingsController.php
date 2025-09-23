@@ -52,6 +52,8 @@ class BookingsController extends Controller
 
 
         session()->flash('success' , "Successfully Created Booking");
+
+
         return redirect()->route('staff.bookings.viewbooking' , $newBooking->id);
 
     }

@@ -23,6 +23,7 @@ class ReportsController extends Controller
         $totalBookings = $bookings->count();
         $bookingsByStatus = $this->getBookingsByStatus($bookings);
         $cashRevenue = $this->getCashRevenue($bookings);
+
         $unpaidBookings = $this->getUnpaidBookingsCount($bookings);
         $paymentConversion = $this->getPaymentConversion($totalBookings, $unpaidBookings);
 
@@ -114,12 +115,14 @@ class ReportsController extends Controller
                 $totalForDate += $bookings
                     ->filter(fn($p) =>
                         $p->is_paid &&
-                        $p->paid_at &&
+                        Carbon::parse($p->paid_at) &&
                         Carbon::parse($p->paid_at)->toDateString() == $date
                     )
                     ->sum('amount');
 
+
             $revenuePerDay[] = $totalForDate;
+
         }
 
         return collect($revenuePerDay);

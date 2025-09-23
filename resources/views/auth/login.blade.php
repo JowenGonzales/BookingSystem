@@ -13,7 +13,7 @@
                                     <form method="POST" action="{{route('login')}}">
                                         @csrf
                                         <div class="form-floating mb-3">
-                                            <input name="email" class="form-control" id="inputEmail" type="email" placeholder="name@example.com" />
+                                            <input value="{{old('email')}}" name="email" class="form-control" id="inputEmail" type="email" placeholder="name@example.com" />
                                             <label for="inputEmail">Email address</label>
                                             @error('email')
                                                 <span class="text-danger" role="alert">

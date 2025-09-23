@@ -31,8 +31,8 @@
         Quickly book your appointments or check your existing reservations.
     </p>
     <div class="flex gap-4 flex-wrap justify-center">
-        <a href="{{route('login')}}" class="px-6 py-3 bg-red-500 text-white rounded-lg hover:bg-red-600 transition">Staff</a>
-        <a href="{{route('staff.login')}}" class="px-6 py-3 bg-gray-200 dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg hover:bg-gray-300 dark:hover:bg-gray-700 transition">Customer</a>
+        <a href="{{route('staff.login')}}" class="px-6 py-3 bg-red-500 text-white rounded-lg hover:bg-red-600 transition">Staff</a>
+        <a href="{{route('login')}}" class="px-6 py-3 bg-gray-200 dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg hover:bg-gray-300 dark:hover:bg-gray-700 transition">Customer</a>
     </div>
 </div>
 

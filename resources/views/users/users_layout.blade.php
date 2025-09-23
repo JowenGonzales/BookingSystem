@@ -57,6 +57,7 @@
                     </a>
                     <div class="collapse" id="collapseLayouts" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
                         <nav class="sb-sidenav-menu-nested nav">
+                            <a class="nav-link" href="{{route('mybooking.createbooking')}}">Create Booking</a>
                             <a class="nav-link" href="{{route('mybooking.managebookings')}}">View/Manage Bookings</a>
                         </nav>
                     </div>
