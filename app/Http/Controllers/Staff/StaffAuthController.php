@@ -47,9 +47,16 @@ class StaffAuthController extends Controller
 
     public function logout()
     {
+        // Log out the staff
         auth()->guard('staff')->logout();
-//        Session::flush();
-        Session::put('success', 'You are logout sucessfully');
+
+        request()->session()->invalidate();
+
+        request()->session()->regenerateToken();
+
+        session()->flash('success', 'You are logged out successfully');
+
+        // Redirect to the login page
         return redirect(route('staff.login'));
     }
 }

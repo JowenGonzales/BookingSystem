@@ -17,7 +17,42 @@ class MyBookingController extends Controller
 
 
 
+    public function storeBooking(Request $request)
+    {
 
+        $request->validate([
+            'service_name' => 'required|string|max:255',
+            'scheduled_at' => [
+                'required',
+                'date',
+                'after:now',
+                new NoDoubleBooking($request->service_name), // 👈 custom rule
+            ],
+            'notes' => 'nullable|string',
+            'amount' => 'required|numeric|min:1',
+        ]);
+
+
+        $newBooking = Booking::create([
+            'user_id' => Auth::id(),
+            'reference_code' => CodeHelper::generateBookingCode(),
+            'service_name' => $request->input('service_name'),
+            'booking_date' => $request->input('scheduled_at'), // match DB column
+            'status' => 'pending',
+            'payment_method' => 'cash',
+            'notes' => $request->input('notes'),
+            'amount' => $request->input('amount'),
+        ]);
+
+
+
+
+        session()->flash('success' , "Successfully Created Booking");
+
+
+        return redirect()->route('user.mybooking.managebookings.viewbooking' , $newBooking->id);
+
+    }
 
     public function manageBookings()
     {
@@ -25,6 +60,11 @@ class MyBookingController extends Controller
         return view('users.my_bookings.managebookings' , [
            'bookings' => $bookings,
         ]);
+    }
+
+    public function createBooking()
+    {
+        return view('users.my_bookings.create_booking');
     }
 
     public function viewBooking($id)
