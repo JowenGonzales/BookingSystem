@@ -62,12 +62,12 @@
                         </nav>
                     </div>
                     <a class="nav-link" href="{{route('user.payments')}}">
-                        <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
+                        <div class="sb-nav-link-icon"><i class="fas fa-wallet"></i></div>
                         Payments
                     </a>
                     <a class="nav-link" href="{{route('logout')}}" onclick="event.preventDefault();
                         document.getElementById('logout-form').submit();">
-                        <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
+                        <div class="sb-nav-link-icon"><i class="fas fa-sign-out-alt"></i></div>
                         Logout
                     </a>
 
