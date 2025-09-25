@@ -4,110 +4,64 @@ namespace App\Http\Controllers\Staff;
 
 use App\Http\Controllers\Controller;
 use App\Http\Helpers\CodeHelper;
+use App\Http\Requests\StoreBookingRequest;
 use App\Models\Booking;
+use App\Repositories\BookingRepository;
+use App\Repositories\Staff\EloquentBookingRepository;
 use App\Rules\NoDoubleBooking;
+use App\Services\Staff\BookingService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class BookingsController extends Controller
 {
     //
+    protected $service;
+    protected $repo;
 
+    public function __construct(BookingService $service, EloquentBookingRepository $repo)
+    {
+        $this->service = $service;
+        $this->repo = $repo;
+    }
 
     public function createBooking()
     {
-        return view('staff.bookings.create_booking' , [
+        return view('staff.bookings.create_booking');
 
-        ]);
     }
 
-    public function storeBooking(Request $request)
+    public function storeBooking(StoreBookingRequest $request)
     {
+        $booking = $this->service->createBooking($request->validated(), Auth::id());
+        session()->flash('success' , 'Successfully Created Booking');
 
-        $request->validate([
-            'service_name' => 'required|string|max:255',
-            'scheduled_at' => [
-                'required',
-                'date',
-                'after:now',
-                new NoDoubleBooking($request->service_name), // 👈 custom rule
-            ],
-            'notes' => 'nullable|string',
-            'amount' => 'required|numeric|min:1',
-        ]);
-
-
-        $newBooking = Booking::create([
-            'user_id' => Auth::id(),
-            'reference_code' => CodeHelper::generateBookingCode(),
-            'service_name' => $request->input('service_name'),
-            'booking_date' => $request->input('scheduled_at'), // match DB column
-            'status' => 'pending',
-            'payment_method' => 'cash',
-            'notes' => $request->input('notes'),
-            'amount' => $request->input('amount'),
-        ]);
-
-
-
-
-        session()->flash('success' , "Successfully Created Booking");
-
-
-        return redirect()->route('staff.bookings.viewbooking' , $newBooking->id);
-
+        return redirect()->route('staff.bookings.viewbooking' , $booking->id);
     }
-
-
 
     public function allBookings(Request $request)
     {
-        $query = Booking::with('user');
+        $filters = $request->only(['date_from' , 'date_to', 'status', 'payment_state']);
+        $bookings = $this->repo->list($filters);
 
-        if ($request->filled('date_from')) {
-            $query->whereDate('booking_date', '>=', $request->date_from);
-        }
-        if ($request->filled('date_to')) {
-            $query->whereDate('booking_date', '<=', $request->date_to);
-        }
-        if ($request->filled('status')) {
-            $query->where('status', $request->status);
-        }
-        if ($request->filled('payment_state')) {
-            if ($request->payment_state == 'paid') {
-                $query->where('is_paid', true);
-            } else {
-                $query->where('is_paid', false);
-            }
-        }
-
-        $bookings = $query->orderBy('booking_date', 'desc')->get();
-
-        return view('staff.bookings.all_bookings' , [
-           'bookings' => $bookings,
-        ]);
+        return view('staff.bookings.all_bookings', compact('bookings'));
     }
 
-    public function viewBooking($id)
+    public function viewBooking(Booking $booking)
     {
-        $booking = Booking::find($id);
         return view('staff.bookings.view_booking' , [
-           'booking' => $booking,
+            'booking' => $booking,
         ]);
     }
-
     public function updateStatus(Request $request, Booking $booking)
     {
+
         $request->validate([
-            'status' => 'required|in:pending,confirmed,completed,cancelled',
+            'status' => 'required|in:pending,confirmed,completed,cancelled'
         ]);
+        $this->service->updateStatus($booking, $request->status);
 
-        $booking->update([
-            'status' => $request->status,
-        ]);
-
-        return redirect()->back()->with('success', 'Booking status updated successfully!');
-
+        return back()->with('success' , 'Booking status updated successfully!');
     }
 
 }

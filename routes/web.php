@@ -56,7 +56,7 @@ Route::middleware(['staff.auth'])->prefix('staff')->group(function () {
 
 
     Route::get('bookings', [App\Http\Controllers\Staff\BookingsController::class, 'allBookings'])->name('staff.bookings.allbookings');
-    Route::get('bookings/view-booking/{id}', [App\Http\Controllers\Staff\BookingsController::class, 'viewBooking'])->name('staff.bookings.viewbooking');
+    Route::get('bookings/view-booking/{booking}', [App\Http\Controllers\Staff\BookingsController::class, 'viewBooking'])->name('staff.bookings.viewbooking');
 
     Route::patch('bookings/view-booking/{booking}/status', [App\Http\Controllers\Staff\BookingsController::class, 'updateStatus'])->name('staff.bookings.updatestatus');
 

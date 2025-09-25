@@ -1,4 +1,5 @@
 @if(auth()->guard('staff')->check() || auth()->user()?->isAdmin())
+
     <form action="{{ route('staff.bookings.updatestatus', $booking) }}" method="POST" class="d-inline ms-3">
         @csrf
         @method('PATCH')
