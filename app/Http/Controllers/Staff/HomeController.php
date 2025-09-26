@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Staff;
 use App\Http\Controllers\Controller;
 use App\Models\Booking;
 use App\Models\Payment;
-use App\Repository\BookingRepository;
+use App\Repositories\BookingRepository;
 use App\Services\Staff\DashboardService;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
