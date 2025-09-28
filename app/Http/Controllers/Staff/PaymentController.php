@@ -25,6 +25,5 @@ class PaymentController extends Controller
         return redirect()
             ->back()
             ->with('success', 'Payment submitted successfully! Please wait for confirmation.');
-
     }
 }

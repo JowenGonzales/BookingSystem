@@ -3,15 +3,25 @@
 namespace App\Http\Controllers\Staff;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\StaffAuthLoginRequest;
 use App\Models\Admin;
 use App\Models\Staff;
 use App\Models\User;
+use App\Services\Staff\StaffAuthService;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 
 class StaffAuthController extends Controller
 {
+
+    protected $authService;
+    public function __construct(StaffAuthService $authService)
+    {
+        $this->authService = $authService;
+    }
+
+
     public function getLogin()
     {
         return view('staff.auth.login' , [
@@ -19,27 +29,15 @@ class StaffAuthController extends Controller
         ]);
     }
 
-    public function postLogin(Request $request)
+    public function postLogin(StaffAuthLoginRequest $request)
     {
 
-        $this->validate($request, [
-            'email' => 'required',
-            'password' => 'required',
-        ]);
+        try {
+            $this->authService->login($request->only('email' , 'password'));
+            return redirect()->route('staff.home');
 
-        $staff = Staff::where('email' , $request->input('email'))->first();
-
-        if ($staff) {
-            if(auth()->guard('staff')->attempt(['email' => $request->input('email'),  'password' => $request->input('password')])){
-                $staff = auth()->guard('staff')->user();
-
-                return redirect()->route('staff.home')->with('success','You are Logged in sucessfully.');
-
-            } else {
-                return back()->withErrors(['password' => 'Incorrect Password'])->withInput();
-            }
-        } else {
-            return back()->withErrors(['username' => 'The provided username does not exist.'])->withInput();
+        } catch (\Exception $e) {
+            return back()->withErrors(['auth' => $e->getMessage()])->withInput();
         }
 
     }
@@ -47,16 +45,9 @@ class StaffAuthController extends Controller
 
     public function logout()
     {
-        // Log out the staff
-        auth()->guard('staff')->logout();
-
-        request()->session()->invalidate();
-
-        request()->session()->regenerateToken();
-
+        $this->authService->logout();
         session()->flash('success', 'You are logged out successfully');
 
-        // Redirect to the login page
-        return redirect(route('staff.login'));
+        return redirect()->route('staff.login');
     }
 }
