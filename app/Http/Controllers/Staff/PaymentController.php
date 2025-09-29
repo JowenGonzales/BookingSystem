@@ -3,41 +3,27 @@
 namespace App\Http\Controllers\Staff;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\StorePaymentRequest;
 use App\Models\Booking;
 use App\Models\Payment;
+use App\Services\Staff\PaymentService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class PaymentController extends Controller
 {
-    //
-    public function store(Request $request)
+
+    protected $payments;
+    public function __construct(PaymentService $payments)
     {
-        $request->validate([
-            'booking_id'     => 'required|exists:bookings,id',
-            'amount'         => 'required|numeric|min:1',
-            'receipt_number' => 'nullable|string|max:255',
-            'paid_at'        => 'required|date',
-            'notes'          => 'nullable|string',
-        ]);
+        $this->payments = $payments;
+    }
 
-        $booking = Booking::findOrFail($request->booking_id);
-
-        // Create payment record
-        $payment = Payment::create([
-            'booking_id'     => $booking->id,
-            'user_id'        => Auth::id(), // staff/admin who marked it
-            'payment_method' => 'cash',
-            'amount'         => $request->amount,
-            'notes'          => $request->notes,
-            'status'         => 'confirmed',
-        ]);
-
-        $booking->update([
-            'is_paid' => true,
-        ]);
-
-        session()->flash('success', 'Payment submitted successfully! Please wait for confirmation.');
-        return back();
+    public function store(StorePaymentRequest $request)
+    {
+        $this->payments->storePayment($request->validated());
+        return redirect()
+            ->back()
+            ->with('success', 'Payment submitted successfully! Please wait for confirmation.');
     }
 }

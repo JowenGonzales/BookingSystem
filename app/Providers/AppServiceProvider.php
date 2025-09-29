@@ -4,6 +4,12 @@ namespace App\Providers;
 
 use App\Repositories\BookingRepository;
 use App\Repositories\Staff\BookingRepositoryInterface;
+use App\Repositories\Staff\PaymentRepository;
+use App\Repositories\Staff\PaymentRepositoryInterface;
+use App\Repositories\Staff\ReportsRepository;
+use App\Repositories\Staff\ReportsRepositoryInterface;
+use App\Repositories\Staff\StaffAuthRepository;
+use App\Repositories\Staff\StaffAuthRepositoryInterface;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -14,6 +20,20 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
         //
+
+        $this->app->bind(
+            PaymentRepositoryInterface::class,
+            PaymentRepository::class,
+        );
+        $this->app->bind(
+            StaffAuthRepositoryInterface::class,
+            StaffAuthRepository::class,
+        );
+        $this->app->bind(
+            ReportsRepositoryInterface::class,
+            ReportsRepository::class,
+        );
+
     }
 
     /**
@@ -21,7 +41,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+
+
     }
 
 }
