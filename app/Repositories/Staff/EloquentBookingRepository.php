@@ -3,6 +3,7 @@
 namespace App\Repositories\Staff;
 
 use App\Models\Booking;
+use Illuminate\Support\Collection;
 
 class EloquentBookingRepository implements BookingRepositoryInterface
 {
@@ -50,4 +51,16 @@ class EloquentBookingRepository implements BookingRepositoryInterface
         $booking->save();
         return $booking;
     }
+
+    public function getBookingsBetween(string $from, string $to) : Collection
+    {
+
+        return Booking::with('payments', 'user')
+            ->whereDate('booking_date', '>=', $from)
+            ->whereDate('booking_date', '<=', $to)
+            ->get();
+
+    }
+
+
 }

@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\Models\Booking;
+use Illuminate\Support\Collection;
 
 class BookingRepository
 {
@@ -19,4 +20,5 @@ class BookingRepository
                 ];
             });
     }
+
 }
